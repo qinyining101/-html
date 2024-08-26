@@ -1,0 +1,30 @@
+.card{
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    max-width: 300px;
+    margin: auto;
+    text-align: center;
+    font-family: arial;
+}
+.container{
+    padding: 0 16px;
+}
+.container::after{
+    content:"";
+    clear: both;
+    display: table;
+}
+a{
+
+    color: black;
+}
+footer {
+    text-align: center;
+    background-color: #333;
+    color: #fff;
+    background-color: #888;
+    color: #fff;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}

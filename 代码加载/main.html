@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>加载代码</title>
+    <meta charset="utf-8">
+    <link rel="icon" href="rcc/图片标题.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="rcc/style.css">
+</head>
+<main>
+    <body>
+	    <header><h1>加载代码</h1></header>
+        <audio id="myAudio" src="rcc/夜空中最亮的星.mp3" autoplay loop></audio>
+        <!--核心代码-->
+        <div id="doing_message" style="display:none; color:orange; font-size:20px;">代码加载中！</div>
+        <div id="done_message" style="display:none; color:green; font-size:20px;">代码加载完成！</div>
+        <progress value="0" id="code_progress" max="1000"></progress>
+        <span style="font-size:16px;" id="code_progress_span">0%</span>
+        <select id="code_select">
+            <option value="Hello World">Hello World</option>
+            <option value="oj184">oj184</option>
+            <option value="oj198">oj198</option>
+        </select>
+        <script>
+            function delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            async function click1(){
+                document.getElementById("Hello World").style.display="none";
+                document.getElementById("oj184").style.display="none";
+                document.getElementById("oj198").style.display="none";
+                document.getElementById("doing_message").style.display="none";
+                document.getElementById("done_message").style.display="none";
+                var code_progress=document.getElementById("code_progress");
+                code_progress.value=0;
+                document.getElementById("doing_message").style.display="block";                
+
+                async function first() {
+                    code_progress.value += 10;
+                    document.getElementById("code_progress_span").textContent = (code_progress.value / 10).toString() + "%";
+                    await delay(0);
+                }
+
+                async function second() {
+                    code_progress.value -= 2.5;
+                    document.getElementById("code_progress_span").textContent = (code_progress.value / 10).toString() + "%";
+                    await delay(0);
+                }
+
+                async function third() {
+                    code_progress.value += 10;
+                    document.getElementById("code_progress_span").textContent = (code_progress.value / 10).toString() + "%";
+                    await delay(0);
+                }
+
+                async function fourth() {
+                    code_progress.value += 10;
+                    document.getElementById("code_progress_span").textContent = (code_progress.value / 10).toString() + "%";
+                    await delay(0);
+                }
+                async function fifth() {
+                    code_progress.value += 10;
+                    document.getElementById("code_progress_span").textContent = (code_progress.value / 10).toString() + "%";
+                    if (code_progress.value >= code_progress.max) {
+                        let b;
+                        if(a==2){b=code_select.value} 
+                        else{b="first"}
+                        document.getElementById("doing_message").style.display = "none";
+                        document.getElementById(b).style.display = "block";
+                        document.getElementById("done_message").style.display = "block";
+                    }
+                    await delay(0);
+                }
+
+                for (let i = 0; i < 100; ++i) {
+                    await first();
+                }
+
+                for (let k = 0; k < 400; ++k) {
+                    await second();
+                }
+
+                for (let m = 0; m < 90; m++) {
+                    await third();
+                }
+
+                for (let j = 0; j < 5; j++) {
+                    await fourth();
+                }
+
+                for (let l = 0; l < 5; l++) {
+                    await fifth();
+                }
+            }
+        </script>        
+        <button onclick="click1()">加载代码</button>
+        <br>
+        <select id="bgm_select">
+            <option value="电摇">电摇</option>
+            <option value="大香蕉">大香蕉</option>
+            <option value="夜空中最亮的星">夜空中最亮的星</option>
+        </select>
+        <button onclick="document.getElementById('myAudio').src='rcc/'+bgm_select.value.toString()+'.mp3';">播放背景音乐</button>
+        <div id="Hello World" style="display:none;">
+            <code>
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+int main()
+{
+    cout&lt;&lt;"Hello World"&lt;&lt;endl;           
+    return 0;
+}
+</code>
+
+        </div>
+        <div id="oj184" style="display:none;">
+            <code>
+n=0
+i=0
+j=0
+temp=0
+stu = [[0 for _ in range(5)] for _ in range(350)]
+n=int(input())
+for i in range(n):
+stu[i][0]=i+1
+e=input().split()
+stu[i][1]=int(e[0])
+stu[i][2]=int(e[1])
+stu[i][3]=int(e[2])
+for j in range(1,4):
+    stu[i][4]+=stu[i][j]
+for i in range(n):
+    for j in range(i+1,n+1):
+        if stu[i][4]&lt;stu[j][4] or (stu[i][4]==stu[j][4] and stu[i][1]&lt;stu[j][1]) or (stu[i][4]==stu[j][4] and stu[i][1]==stu[j][1] and stu[i][0]&gt;stu[j][0]):
+            temp=stu[i][0]
+            stu[i][0]=stu[j][0]
+            stu[j][0]=temp
+            temp=stu[i][1]
+            stu[i][1]=stu[j][1]
+            stu[j][1]=temp
+            temp=stu[i][2]
+            stu[i][2]=stu[j][2]
+            stu[j][2]=temp
+            temp=stu[i][3]
+            stu[i][3]=stu[j][3]
+            stu[j][3]=temp
+            temp=stu[i][4]
+            stu[i][4]=stu[j][4]
+            stu[j][4]=temp
+for i in range(5):
+    print(stu[i][0],stu[i][4])
+            </code>
+        </div>
+    
+            </code>
+        </div>
+        <div id="oj198" style="display:none;">
+            <code>
+def main():
+    a = input().strip()
+    b = input().strip()
+    
+    if a == "-1":
+        if b == "0":
+            print(-31)
+        else:
+            print(-62)
+        return
+    
+    lena = len(a)
+    lenb = len(b)
+    
+    if lena &lt; lenb:
+        a, b = b, a
+        lena, lenb = lenb, lena
+    
+    c = list(a)
+    jw = 0
+    
+    for i in range(lena - 1, -1, -1):
+        j = lenb - (lena - i)
+        sum = (int(a[i]) + (int(b[j]) if j >= 0 else 0) + jw)
+        c[i] = str(sum % 10)
+        jw = sum // 10
+    
+    ans = str(jw) if jw != 0 else ""
+    ans += ''.join(c)
+    
+    while len(ans) &gt; 1:
+        if ans[0] == '0':
+            ans = ans[1:]
+        else:
+            break
+    
+    print(ans)
+main()
+            </code>
+        </div>
+    </body>
+</main>
+<footer>
+    <p><em>版权所有:</em><strong><mark>秦以宁</mark></strong><em>&copy;</em><b>2024</b></p>
+    <p><em>联系方式:</em><a href="mailto:2447273492@qq.com"><strong>2447273492@qq.com</strong></a>或致电:<a href="tel:18382103406"><strong>18382103406</strong></a></p>
+</footer>
+</html>

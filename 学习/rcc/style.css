@@ -1,0 +1,75 @@
+header {
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+}
+
+article {
+  background-color: #000;
+  padding: 10px;
+  margin-bottom: 10px;
+}  
+
+main {
+  background-color: #f2f2f2;
+  padding: 10px;
+}
+
+code {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  display: block;
+  background-color: #555555;
+  padding: 10px;
+  border-radius: 5px;
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  text-align: left; /* 确保文本靠左显示 */
+}
+
+footer {
+  text-align: center;
+  background-color: #333;
+  color: #fff;
+  background-color: #888;
+  color: #fff;
+  padding: 10px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+h1 {
+    font-size: 36px;
+    font-weight: inherit;
+    margin-bottom: 20px;
+}
+
+a[href^="mailto:"]{
+    color: blue;
+    text-decoration: underline;
+    font-weight: bold;
+}  
+a[href^="mailto:"]:hover{
+    color: yellow;
+    text-decoration: underline;
+    font-weight: bold;
+}  
+a[href^='mailto:']:active{
+    color: red;
+    text-decoration: underline;
+    font-weight: bold;
+}  
+a[href^="tel:"]{
+    color: yellow;
+    text-decoration: underline;
+    font-weight: bold;
+}
+a[href^="tel:"]:hover{
+    color: green;
+    text-decoration: underline;
+    font-weight: bold;
+}  
+a[href^="tel:"]:active{
+    color: red;
+    text-decoration: underline;
+    font-weight: bold;
+}  

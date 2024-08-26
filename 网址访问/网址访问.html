@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>网站快速访问</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="rcc/style.css">
+    <link rel="icon" href="rcc/图片标题.ico">
+    <mata name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <section>
+        <h1>小司码快速访问</h1>
+        <nav>
+            <ul>
+                <h1>小司码oj</h1>
+                <img src="http://oj.zszc-xsm.com/pictures/UOJ_small.png" alt="小司码oj">
+                <li><a href="http://oj.zszc-xsm.com/contests" target="_blank">小司码oj 竞赛</a></li>
+                <hr>
+                <li><a href="http://oj.zszc-xsm.com/submissions" target="_blank">小司码oj提交</a></li>
+                <hr>
+                <li><a href="http://oj.zszc-xsm.com/problems" target="_blank">小司码oj题库</a></li>
+                <hr>
+            </ul>
+            <ul>
+                <h1>小司码学生平台</h1>
+                <img src="https://space.zszc-xsm.com/img/logo_xsm.png" width="150" alt="小司码学生平台">
+                <li><a href="https://space.zszc-xsm.com" target="_blank">小司码学生平台</a></li>
+                <hr>
+            </ul>
+        </nav>
+    </section>
+    <section>
+        <h1>uoj</h1>
+        <nav>
+            <ul>
+                <img src="https://cdn.uoj.ac/pictures/UOJ.ico" width="50" height="50" alt="uoj">
+                <li><a href="https://uoj.ac/problems" target="_blank">uoj题库</a></li>
+                <hr>
+                <li><a href="https://uoj.ac/contests" target="_blank">uoj竞赛</a></li>
+                <hr>
+                <li><a href="https://uoj.ac/submissions" target="_blank">uoj提交</a></li>
+                <hr>
+            </ul>
+        </nav>
+    </section>
+    <section>
+        <h1>搜索</h1>
+        <nav>
+            <ul>
+                <img src="https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png" width="200" alt="百度搜索">
+                <li><a href="https://www.baidu.com" target="_blank">百度</a></li>
+                <hr>
+                <img src="https://metaso.cn/apple-touch-icon.png" width="75" height="50" alt="ai搜索">
+                <li><a href="https://metaso.cn" target="_blank">ai搜索</a></li>
+                <hr>
+                <img src="https://cn.bing.com/sa/simg/favicon-trans-bg-blue-mg-png.png" width="50" height="50" alt="bing搜索">
+                <li><a href="https://cn.bing.com" target="_blank">bing搜索</a></li>
+                <hr>
+            </ul>
+        </nav>
+    </section>
+    <section>
+        <nav>
+            <h1>视频</h1>
+            <ul>
+                <img src="https://p-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/favicon.png" width="50" height="50" alt="抖音">
+                <li><a href="https://www.douyin.com" target="_blank">抖音</a></li>
+                <hr>
+                <img src="https://i0.hdslb.com/bfs/static/jinkela/long/images/512.png" width="50" height="50" alt="bilibili">
+                <li><a href="https://www.bilibili.com" target="_blank">bilibili</a></li>
+                <hr>
+            </ul>
+        </nav>
+    </section>
+    <section>
+        <h1>其他</h1>
+        <nav>
+            <ul>
+                <li><a href="https://gesp.ccf.org.cn" target="_blank">GESP</a></li>
+                <hr>
+                <img src="https://static.zhihu.com/heifetz/assets/apple-touch-icon-60.362a8eac.png" width="50">
+                <li><a href="https://www.zhihu.com" target="_blank">知乎</a></li>
+                <hr>
+                <img src="https://res.wx.qq.com/t/webmail/webmail/res/static/images/base/style/favicon/qqmail_favicon_96h.8d124a7.png" width="75" height="75" alt="QQ邮箱">
+                <li><a href="https://www.wx.mail.qq.com" target="_blank">QQ邮箱</a></li>
+                <hr>
+                <img src="https://www.codecademy.com/favicon.ico" width="50" height="50" alt="Codecademy">
+                <li><a href="https://www.codecademy.com" target="_blank">Codecademy</a></li>
+                <hr>
+                <img src="https://github.githubassets.com/assets/apple-touch-icon-144x144-b882e354c005.png" width="75" height="75" alt="github">
+                <li><a href="https://github.com" target="_blank">github</a></li>
+                <hr>
+            </ul>
+        </nav>
+    </section>
+    <section>
+        <h1>自定义文件访问</h1>
+        <nav>
+            <ul>
+                <div id="errorMessage" style="display:none; color:red">输入不能为空！</div>
+                <div id="invalidMessage" style="display:none; color:red">输入路径不合法！</div>
+                <div id="successMessage" style="display:none; color:green">文件已打开！</div>
+                <input type="text" id="custom_url" placeholder="请输入文件地址">
+                <button onclick="checkInput()">访问</button>
+                <script>
+                    function checkInput() {
+                        var input = document.getElementById('custom_url');
+                        var errorMessage = document.getElementById('errorMessage');
+                        var successMessage = document.getElementById('successMessage');
+                        var invalidMessage = document.getElementById('invalidMessage');
+                        if (input.value === '') {
+                            errorMessage.style.display = 'block';
+                            invalidMessage.style.display = 'none';
+                            successMessage.style.display = 'none';
+                        } else {
+                            if (!input.value.match(/^document\:\/\//)) {
+                                invalidMessage.style.display = 'block';
+                                successMessage.style.display = 'none';
+                                errorMessage.style.display = 'none';
+                            } else {
+                                errorMessage.style.display = 'none';
+                                invalidMessage.style.display = 'none';
+                                successMessage.style.display = 'block';
+                                window.open(input.value);
+                            }
+                        }
+                    }
+                </script>
+                <hr>
+            </ul>
+        </nav>
+    </section>
+</body>
+<footer>
+    <p><em>版权所有:</em><strong><mark>秦以宁</mark></strong><em>&copy;</em><b>2024</b></p>
+    <p><em>联系方式:</em><a href="mailto:2447273492@qq.com"><strong>2447273492@qq.com</strong></a>或致电:<a href="tel:18382103406"><strong>18382103406</strong></a></p>
+</footer>
+</html>
+
+    <link rel="stylesheet" href="rcc/style.css">
+    <link rel="icon" href="rcc/图片标题.ico">
+</head>
+<body>
+    <section>
+        <h1>小司码快速访问</h1>
+        <nav>
+            <ul>
+                <h1>小司码oj</h1>
+                <img src="http://oj.zszc-xsm.com/pictures/UOJ_small.png" alt="小司码oj">
+                <li><a href="http://oj.zszc-xsm.com/contests" target="_blank">小司码oj 竞赛</a></li>
+                <hr>
+                <li><a href="http://oj.zszc-xsm.com/submissions" target="_blank">小司码oj提交</a></li>
+                <hr>
+                <li><a href="http://oj.zszc-xsm.com/problems" target="_blank">小司码oj题库</a></li>
+                <hr>
+            </ul>
+            <ul>
+                <h1>小司码学生平台</h1>
+                <img src="https://space.zszc-xsm.com/img/logo_xsm.png" width="150" alt="小司码学生平台">
+                <li><a href="https://space.zszc-xsm.com" target="_blank">小司码学生平台</a></li>
+                <hr>
+            </ul>
+        </nav>
+    </section>
+    <section>
+        <h1>uoj</h1>
+        <nav>
+            <ul>
+                <img src="https://cdn.uoj.ac/pictures/UOJ.ico" width="50" height="50" alt="uoj">
+                <li><a href="https://uoj.ac/problems" target="_blank">uoj题库</a></li>
+                <hr>
+                <li><a href="https://uoj.ac/contests" target="_blank">uoj竞赛</a></li>
+                <hr>
+                <li><a href="https://uoj.ac/submissions" target="_blank">uoj提交</a></li>
+                <hr>
+            </ul>
+        </nav>
+    </section>
+    <section>
+        <h1>搜索</h1>
+        <nav>
+            <ul>
+                <img src="https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png" width="200" alt="百度搜索">
+                <li><a href="https://www.baidu.com" target="_blank">百度</a></li>
+                <hr>
+                <img src="https://metaso.cn/apple-touch-icon.png" width="75" height="50" alt="ai搜索">
+                <li><a href="https://metaso.cn" target="_blank">ai搜索</a></li>
+                <hr>
+                <img src="https://cn.bing.com/sa/simg/favicon-trans-bg-blue-mg-png.png" width="50" height="50" alt="bing搜索">
+                <li><a href="https://cn.bing.com" target="_blank">bing搜索</a></li>
+                <hr>
+            </ul>
+        </nav>
+    </section>
+    <section>
+        <nav>
+            <h1>视频</h1>
+            <ul>
+                <img src="https://p-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/favicon.png" width="50" height="50" alt="抖音">
+                <li><a href="https://www.douyin.com" target="_blank">抖音</a></li>
+                <hr>
+                <img src="https://i0.hdslb.com/bfs/static/jinkela/long/images/512.png" width="50" height="50" alt="bilibili">
+                <li><a href="https://www.bilibili.com" target="_blank">bilibili</a></li>
+                <hr>
+            </ul>
+        </nav>
+    </section>
+    <section>
+        <h1>其他</h1>
+        <nav>
+            <ul>
+                <li><a href="https://gesp.ccf.org.cn" target="_blank">GESP</a></li>
+                <hr>
+                <img src="https://static.zhihu.com/heifetz/assets/apple-touch-icon-60.362a8eac.png" width="50">
+                <li><a href="https://www.zhihu.com" target="_blank">知乎</a></li>
+                <hr>
+                <img src="https://res.wx.qq.com/t/webmail/webmail/res/static/images/base/style/favicon/qqmail_favicon_96h.8d124a7.png" width="75" height="75" alt="QQ邮箱">
+                <li><a href="https://www.wx.mail.qq.com" target="_blank">QQ邮箱</a></li>
+                <hr>
+                <img src="https://www.codecademy.com/favicon.ico" width="50" height="50" alt="Codecademy">
+                <li><a href="https://www.codecademy.com" target="_blank">Codecademy</a></li>
+                <hr>
+                <img src="https://github.githubassets.com/assets/apple-touch-icon-144x144-b882e354c005.png" width="75" height="75" alt="github">
+                <li><a href="https://github.com" target="_blank">github</a></li>
+                <hr>
+            </ul>
+        </nav>
+    </section>
+    <section>
+        <h1>自定义文件访问</h1>
+        <nav>
+            <ul>
+                <div id="errorMessage" style="display:none; color:red">输入不能为空！</div>
+                <div id="invalidMessage" style="display:none; color:red">输入路径不合法！</div>
+                <div id="successMessage" style="display:none; color:green">文件已打开！</div>
+                <input type="text" id="custom_url" placeholder="请输入文件地址">
+                <button onclick="checkInput()">访问</button>
+                <script>
+                    function checkInput() {
+                        var input = document.getElementById('custom_url');
+                        var errorMessage = document.getElementById('errorMessage');
+                        var successMessage = document.getElementById('successMessage');
+                        var invalidMessage = document.getElementById('invalidMessage');
+                        if (input.value === '') {
+                            errorMessage.style.display = 'block';
+                            invalidMessage.style.display = 'none';
+                            successMessage.style.display = 'none';
+                        } else {
+                            if (!input.value.match(/^document\:\/\//)) {
+                                invalidMessage.style.display = 'block';
+                                successMessage.style.display = 'none';
+                                errorMessage.style.display = 'none';
+                            } else {
+                                errorMessage.style.display = 'none';
+                                invalidMessage.style.display = 'none';
+                                successMessage.style.display = 'block';
+                                window.open(input.value);
+                            }
+                        }
+                    }
+                </script>
+                <hr>
+            </ul>
+        </nav>
+    </section>
+</body>
+<footer>
+    <p><em>版权所有:</em><strong><mark>秦以宁</mark></strong><em>&copy;</em><b>2024</b></p>
+    <p><em>联系方式:</em><a href="mailto:2447273492@qq.com"><strong>2447273492@qq.com</strong></a>或致电:<a href="tel:18382103406"><strong>18382103406</strong></a></p>
+</footer>
+</html>
