@@ -144,6 +144,7 @@
         }
  
         document.addEventListener('keydown', (e) => {
+            if(!designMode){
             if (e.key === 'ArrowUp' && dY !== 1) {
                 dX = 0; dY = -1;
                 moveOnce = true;
@@ -157,6 +158,8 @@
                 dX = 1; dY = 0;
                 moveOnce = true;
             }
+        }
+            
         });
  
         canvas.addEventListener('click', (e) => {
