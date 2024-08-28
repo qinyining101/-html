@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>贪吃蛇游戏</title>
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/172038171?v=4" type="image/png">
     <style>
         canvas {
             display: block;
@@ -12,36 +13,92 @@
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <canvas id="gameCanvas" width="600" height="400"></canvas>
+    <button id="goButton">前往</button>
+    <button id="removeButton">消除</button>
+    <button id="saveButton">存档</button>
+    <button id="loadButton">打开存档</button>
+    <button id="designButton">设计关卡</button>
+    <span id="score">得分: 0</span>
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const box = 20;
         let snake = [{x: 10, y: 10}];
-        let food = {x: 15, y: 15};
+        let food = [];
+        let obstacles = [];
         let dX = 0, dY = 0;
         let moveOnce = false;
+        let target = null;
+        let score = 0;
+        let gameOver = false;
+        let designMode = false;
+        let designType = '';
  
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             snake.forEach(segment => {
                 ctx.fillStyle = 'green';
                 ctx.fillRect(segment.x * box, segment.y * box, box, box);
+                ctx.strokeStyle = 'black';
+                ctx.strokeRect(segment.x * box, segment.y * box, box, box);
             });
-            ctx.fillStyle = 'red';
-            ctx.fillRect(food.x * box, food.y * box, box, box);
+            food.forEach(f => {
+                ctx.fillStyle = 'red';
+                ctx.fillRect(f.x * box, f.y * box, box, box);
+                ctx.strokeStyle = 'black';
+                ctx.strokeRect(f.x * box, f.y * box, box, box);
+            });
+            obstacles.forEach(obstacle => {
+                ctx.fillStyle = obstacle.selected ? 'black' : 'gray';
+                ctx.fillRect(obstacle.x * box, obstacle.y * box, box, box);
+                ctx.strokeStyle = 'black';
+                ctx.strokeRect(obstacle.x * box, obstacle.y * box, box, box);
+            });
+            if (target) {
+                ctx.fillStyle = 'yellow';
+                ctx.fillRect(target.x * box, target.y * box, box, box);
+                ctx.strokeStyle = 'black';
+                ctx.strokeRect(target.x * box, target.y * box, box, box);
+            }
+            for (let x = 0; x <= canvas.width; x += box) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y <= canvas.height; y += box) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
         }
  
         function update() {
             if (moveOnce) {
                 const head = {x: snake[0].x + dX, y: snake[0].y + dY};
                 snake.unshift(head);
-                if (head.x === food.x && head.y === food.y) {
-                    food = {x: Math.floor(Math.random() * (canvas.width / box)), y: Math.floor(Math.random() * (canvas.height / box))};
+                const eatenFood = food.filter(f => f.x === head.x && f.y === head.y);
+                if (eatenFood.length > 0) {
+                    score += 20 * eatenFood.length;
+                    updateScore();
+                    food = food.filter(f => f.x !== head.x || f.y !== head.y);
+                    if (food.length === 0) {
+                        generateFood();
+                    }
+                    eatenFood.forEach(() => {
+                        let newObstacle = {x: Math.floor(Math.random() * (canvas.width / box)), y: Math.floor(Math.random() * (canvas.height / box))};
+                        while (snake.some(segment => segment.x === newObstacle.x && segment.y === newObstacle.y) || obstacles.some(obstacle => obstacle.x === newObstacle.x && obstacle.y === newObstacle.y) || food.some(f => f.x === newObstacle.x && f.y === newObstacle.y)) {
+                            newObstacle = {x: Math.floor(Math.random() * (canvas.width / box)), y: Math.floor(Math.random() * (canvas.height / box))};
+                        }
+                        obstacles.push(newObstacle);
+                    });
                 } else {
                     snake.pop();
                 }
                 moveOnce = false;
+                target = null;
             }
         }
  
@@ -55,14 +112,31 @@
                     return true;
                 }
             }
+            if (obstacles.some(obstacle => obstacle.x === head.x && obstacle.y === head.y)) {
+                return true;
+            }
             return false;
         }
  
         function gameLoop() {
             if (checkCollision()) {
-                alert('游戏结束');
-                document.location.reload();
-                return;
+                if (gameOver) {
+                    alert('游戏结束');
+                    document.location.reload();
+                    return;
+                } else {
+                    if (score >= 400) {
+                        score -= 400;
+                        updateScore();
+                        gameOver = false;
+                        snake = [{x: 10, y: 10}];
+                        dX = 0; dY = 0;
+                        moveOnce = false;
+                    } else {
+                        alert('积分不够，无法复活');
+                        gameOver = true;
+                    }
+                }
             }
             update();
             draw();
@@ -85,7 +159,254 @@
             }
         });
  
+        canvas.addEventListener('click', (e) => {
+            if (designMode) {
+                const rect = canvas.getBoundingClientRect();
+                const x = Math.floor((e.clientX - rect.left) / box);
+                const y = Math.floor((e.clientY - rect.top) / box);
+                if (designType === 'food') {
+                    food.push({x, y});
+                } else if (designType === 'obstacle') {
+                    obstacles.push({x, y, selected: false});
+                } else if (designType === 'target') {
+                    target = {x, y};
+                }
+                draw();
+            } else {
+                const rect = canvas.getBoundingClientRect();
+                const x = Math.floor((e.clientX - rect.left) / box);
+                const y = Math.floor((e.clientY - rect.top) / box);
+                if (!snake.some(segment => segment.x === x && segment.y === y) && !food.some(f => f.x === x && f.y === y)) {
+                    if (obstacles.some(obstacle => obstacle.x === x && obstacle.y === y)) {
+                        obstacles.forEach(obstacle => {
+                            if (obstacle.x === x && obstacle.y === y) {
+                                obstacle.selected = !obstacle.selected;
+                            }
+                        });
+                    } else {
+                        target = {x, y};
+                    }
+                    draw();
+                }
+            }
+        });
+ 
+        document.getElementById('goButton').addEventListener('click', () => {
+            if (target) {
+                if (score >= 2) {
+                    score -= 2;
+                    updateScore();
+                    const path = bfs(snake[0], target);
+                    if (path) {
+                        moveAlongPath(path);
+                    } else {
+                        alert('无法到达目标');
+                    }
+                } else {
+                    alert('积分不够，无法使用“前往”功能');
+                }
+            }
+        });
+ 
+        document.getElementById('removeButton').addEventListener('click', () => {
+            const selectedObstacles = obstacles.filter(obstacle => obstacle.selected);
+            if (selectedObstacles.length > 0) {
+                if (score >= selectedObstacles.length * 50) {
+                    score -= selectedObstacles.length * 50;
+                    updateScore();
+                    obstacles = obstacles.filter(obstacle => !obstacle.selected);
+                } else {
+                    alert('积分不够，无法消除障碍');
+                }
+            }
+            draw();
+        });
+ 
+        document.getElementById('saveButton').addEventListener('click', () => {
+            const data = {
+                snake,
+                food,
+                obstacles,
+                score,
+                target
+            };
+            const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'level.tcs';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+ 
+        document.getElementById('loadButton').addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.tcs';
+            input.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const data = JSON.parse(event.target.result);
+                        snake = data.snake;
+                        food = data.food;
+                        obstacles = data.obstacles;
+                        score = data.score;
+                        target = data.target;
+                        updateScore();
+                        draw();
+                    };
+                    reader.readAsText(file);
+                }
+            });
+            input.click();
+        });
+ 
+        document.getElementById('designButton').addEventListener('click', () => {
+            designMode = !designMode;
+            if (designMode) {
+                document.getElementById('goButton').style.display = 'none';
+                document.getElementById('removeButton').style.display = 'none';
+                document.getElementById('saveButton').style.display = 'none';
+                document.getElementById('loadButton').style.display = 'none';
+                const designButtons = document.createElement('div');
+                designButtons.innerHTML = `
+                    <button id="foodButton">食物</button>
+                    <button id="obstacleButton">障碍</button>
+                `;
+                document.body.appendChild(designButtons);
+                document.getElementById('foodButton').addEventListener('click', () => {
+                    designType = 'food';
+                });
+                document.getElementById('obstacleButton').addEventListener('click', () => {
+                    designType = 'obstacle';
+                });
+                document.getElementById('targetButton').addEventListener('click', () => {
+                    designType = 'target';
+                });
+            } else {
+                document.getElementById('goButton').style.display = 'inline';
+                document.getElementById('removeButton').style.display = 'inline';
+                document.getElementById('saveButton').style.display = 'inline';
+                document.getElementById('loadButton').style.display = 'inline';
+                document.getElementById('foodButton').style.display = 'none';
+                document.getElementById('obstacleButton').style.display = 'none';
+
+            }
+        });
+ 
+        function bfs(start, end) {
+            const queue = [{pos: start, path: []}];
+            const visited = new Set();
+            visited.add(`${start.x},${start.y}`);
+            const directions = [
+                {dx: -1, dy: 0},
+                {dx: 1, dy: 0},
+                {dx: 0, dy: -1},
+                {dx: 0, dy: 1}
+            ];
+            while (queue.length > 0) {
+                const {pos, path} = queue.shift();
+                for (const {dx, dy} of directions) {
+                    const newPos = {x: pos.x + dx, y: pos.y + dy};
+                    if (newPos.x === end.x && newPos.y === end.y) {
+                        return [...path, newPos];
+                    }
+                    if (newPos.x >= 0 && newPos.x < canvas.width / box && newPos.y >= 0 && newPos.y < canvas.height / box && !snake.some(segment => segment.x === newPos.x && segment.y === newPos.y) && !obstacles.some(obstacle => obstacle.x === newPos.x && obstacle.y === newPos.y) && !visited.has(`${newPos.x},${newPos.y}`)) {
+                        visited.add(`${newPos.x},${newPos.y}`);
+                        queue.push({pos: newPos, path: [...path, newPos]});
+                    }
+                }
+            }
+            return null;
+        }
+ 
+        function moveAlongPath(path) {
+            let index = 0;
+            const interval = setInterval(() => {
+                if (index < path.length) {
+                    const nextPos = path[index];
+                    dX = nextPos.x - snake[0].x;
+                    dY = nextPos.y - snake[0].y;
+                    moveOnce = true;
+                    index++;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 100);
+        }
+ 
+        function generateFood() {
+            const foodCount = Math.floor(Math.random() * 10) + 1;
+            for (let i = 0; i < foodCount; i++) {
+                let newFood = {x: Math.floor(Math.random() * (canvas.width / box)), y: Math.floor(Math.random() * (canvas.height / box))};
+                while (snake.some(segment => segment.x === newFood.x && segment.y === newFood.y) || obstacles.some(obstacle => obstacle.x === newFood.x && obstacle.y === newFood.y) || food.some(f => f.x === newFood.x && f.y === newFood.y)) {
+                    newFood = {x: Math.floor(Math.random() * (canvas.width / box)), y: Math.floor(Math.random() * (canvas.height / box))};
+                }
+                food.push(newFood);
+            }
+        }
+
+ 
+        function bfs(start, end) {
+            const queue = [{pos: start, path: []}];
+            const visited = new Set();
+            visited.add(`${start.x},${start.y}`);
+            const directions = [
+                {dx: -1, dy: 0},
+                {dx: 1, dy: 0},
+                {dx: 0, dy: -1},
+                {dx: 0, dy: 1}
+            ];
+            while (queue.length > 0) {
+                const {pos, path} = queue.shift();
+                for (const {dx, dy} of directions) {
+                    const newPos = {x: pos.x + dx, y: pos.y + dy};
+                    if (newPos.x === end.x && newPos.y === end.y) {
+                        return [...path, newPos];
+                    }
+                    if (newPos.x >= 0 && newPos.x < canvas.width / box && newPos.y >= 0 && newPos.y < canvas.height / box && !snake.some(segment => segment.x === newPos.x && segment.y === newPos.y) && !obstacles.some(obstacle => obstacle.x === newPos.x && obstacle.y === newPos.y) && !visited.has(`${newPos.x},${newPos.y}`)) {
+                        visited.add(`${newPos.x},${newPos.y}`);
+                        queue.push({pos: newPos, path: [...path, newPos]});
+                    }
+                }
+            }
+            return null;
+        }
+ 
+        function moveAlongPath(path) {
+            let index = 0;
+            const interval = setInterval(() => {
+                if (index < path.length) {
+                    const nextPos = path[index];
+                    dX = nextPos.x - snake[0].x;
+                    dY = nextPos.y - snake[0].y;
+                    moveOnce = true;
+                    index++;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 100);
+        }
+ 
+        function generateFood() {
+            const foodCount = Math.floor(Math.random() * 10) + 1;
+            for (let i = 0; i < foodCount; i++) {
+                let newFood = {x: Math.floor(Math.random() * (canvas.width / box)), y: Math.floor(Math.random() * (canvas.height / box))};
+                while (snake.some(segment => segment.x === newFood.x && segment.y === newFood.y) || obstacles.some(obstacle => obstacle.x === newFood.x && obstacle.y === newFood.y) || food.some(f => f.x === newFood.x && f.y === newFood.y)) {
+                    newFood = {x: Math.floor(Math.random() * (canvas.width / box)), y: Math.floor(Math.random() * (canvas.height / box))};
+                }
+                food.push(newFood);
+            }
+        }
+ 
+        function updateScore() {
+            document.getElementById('score').innerText = `得分: ${score}`;
+        }
+ 
+        generateFood();
         gameLoop();
     </script>
 </body>
-</html>
+</html>               
