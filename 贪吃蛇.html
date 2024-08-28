@@ -24,6 +24,7 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const box = 20;
+        let firstdie = true;
         let snake = [{x: 10, y: 10}];
         let food = [];
         let obstacles = [];
@@ -119,13 +120,13 @@
         }
  
         function gameLoop() {
-            if (checkCollision()) {
+            if (checkCollision() && !firstdie) {
                 if (gameOver) {
                     alert('游戏结束');
                     document.location.reload();
                     return;
                 } else {
-                    if (score >= 400) {
+                    if (score >= 400 && !firstdie) {
                         score -= 400;
                         updateScore();
                         gameOver = false;
@@ -133,8 +134,14 @@
                         dX = 0; dY = 0;
                         moveOnce = false;
                     } else {
-                        alert('积分不够，无法复活');
-                        gameOver = true;
+                        if(firstdie){
+                            alert('请注意,撞到边缘或自己身体会死亡,请重新开始游戏，这是最后通牒！')
+                            firstdie = false;
+                        }
+                        else{}
+                            alert('积分不够，无法复活');
+                            gameOver = true;
+                        }
                     }
                 }
             }
