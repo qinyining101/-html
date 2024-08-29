@@ -138,7 +138,7 @@
                             alert('请注意,撞到边缘或自己身体会死亡,请重新开始游戏，这是最后通牒！')
                             firstdie = false;
                         }
-                        else{}
+                        else{
                             alert('积分不够，无法复活');
                             gameOver = true;
                         }
@@ -148,7 +148,7 @@
             update();
             draw();
             setTimeout(gameLoop, 100);
-        }
+        
  
         document.addEventListener('keydown', (e) => {
             if(!designMode){
@@ -417,6 +417,7 @@
  
         generateFood();
         gameLoop();
+        }
     </script>
 </body>
 </html>               
