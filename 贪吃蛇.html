@@ -24,7 +24,6 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const box = 20;
-        let firstdie = true;
         let snake = [{x: 10, y: 10}];
         let food = [];
         let obstacles = [];
@@ -35,7 +34,8 @@
         let gameOver = false;
         let designMode = false;
         let designType = '';
- 
+        let firstdie = true;
+
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             snake.forEach(segment => {
@@ -120,23 +120,25 @@
         }
  
         function gameLoop() {
-            if (checkCollision() && !firstdie) {
-                if (gameOver) {
+            if (checkCollision()) {
+                if (gameOver && !firstdie) {
                     alert('游戏结束');
                     document.location.reload();
                     return;
                 } else {
-                    if (score >= 400 && !firstdie) {
-                        score -= 400;
-                        updateScore();
+                    if (firstdie) {
+                        firstdie = false;
+                        alert('请注意，碰到边缘或自己身体或障碍会死亡，这是最后通牒！')
                         gameOver = false;
                         snake = [{x: 10, y: 10}];
                         dX = 0; dY = 0;
                         moveOnce = false;
                     } else {
-                        if(firstdie){
-                            alert('请注意,撞到边缘或自己身体会死亡,请重新开始游戏，这是最后通牒！')
-                            firstdie = false;
+                        if(score>=400){
+                            alert('复活成功！'+"目前得分："+score.toString())
+                            snake = [{x: 10, y: 10}];
+                            dX = 0; dY = 0;
+                            moveOnce = false;
                         }
                         else{
                             alert('积分不够，无法复活');
@@ -148,7 +150,7 @@
             update();
             draw();
             setTimeout(gameLoop, 100);
-        
+        }
  
         document.addEventListener('keydown', (e) => {
             if(!designMode){
@@ -178,9 +180,7 @@
                     food.push({x, y});
                 } else if (designType === 'obstacle') {
                     obstacles.push({x, y, selected: false});
-                } else if (designType === 'target') {
-                    target = {x, y};
-                }
+                } 
                 draw();
             } else {
                 const rect = canvas.getBoundingClientRect();
@@ -244,7 +244,22 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'level.tcs';
+            let now = new Date();
+
+            // 转换为北京时间（东八区）
+            let beijingTime = new Date(now.getTime() + (8 * 60 * 60 * 1000));
+
+            // 格式化时间
+            let year = beijingTime.getFullYear();
+            let month = String(beijingTime.getMonth() + 1).padStart(2, '0'); // 月份从0开始，需要加1
+            let day = String(beijingTime.getDate()).padStart(2, '0');
+            let hours = String(beijingTime.getHours()).padStart(2, '0');
+            let minutes = String(beijingTime.getMinutes()).padStart(2, '0');
+            let seconds = String(beijingTime.getSeconds()).padStart(2, '0');
+
+            // 输出格式化后的时间
+            let formattedTime = `${year}-${month}-${day}:${hours}:${minutes}.${seconds}`;
+            a.download = formattedTime + '.tcs';
             a.click();
             URL.revokeObjectURL(url);
         });
@@ -280,11 +295,10 @@
                 document.getElementById('removeButton').style.display = 'none';
                 document.getElementById('saveButton').style.display = 'none';
                 document.getElementById('loadButton').style.display = 'none';
+                document.getElementById('designButton').innerText = '结束设计';
                 const designButtons = document.createElement('div');
-                designButtons.innerHTML = `
-                    <button id="foodButton">食物</button>
-                    <button id="obstacleButton">障碍</button>
-                `;
+                designButtons.innerHTML = '<button id="foodButton">食物</button>'+'<button id="obstacleButton">障碍</button>'
+                   
                 document.body.appendChild(designButtons);
                 document.getElementById('foodButton').addEventListener('click', () => {
                     designType = 'food';
@@ -292,10 +306,8 @@
                 document.getElementById('obstacleButton').addEventListener('click', () => {
                     designType = 'obstacle';
                 });
-                document.getElementById('targetButton').addEventListener('click', () => {
-                    designType = 'target';
-                });
             } else {
+                document.getElementById('designButton').innerText = '设计关卡';
                 document.getElementById('goButton').style.display = 'inline';
                 document.getElementById('removeButton').style.display = 'inline';
                 document.getElementById('saveButton').style.display = 'inline';
@@ -309,7 +321,7 @@
         function bfs(start, end) {
             const queue = [{pos: start, path: []}];
             const visited = new Set();
-            visited.add(`${start.x},${start.y}`);
+            visited.add(start.x + ',' + start.y);
             const directions = [
                 {dx: -1, dy: 0},
                 {dx: 1, dy: 0},
@@ -323,8 +335,8 @@
                     if (newPos.x === end.x && newPos.y === end.y) {
                         return [...path, newPos];
                     }
-                    if (newPos.x >= 0 && newPos.x < canvas.width / box && newPos.y >= 0 && newPos.y < canvas.height / box && !snake.some(segment => segment.x === newPos.x && segment.y === newPos.y) && !obstacles.some(obstacle => obstacle.x === newPos.x && obstacle.y === newPos.y) && !visited.has(`${newPos.x},${newPos.y}`)) {
-                        visited.add(`${newPos.x},${newPos.y}`);
+                    if (newPos.x >= 0 && newPos.x < canvas.width / box && newPos.y >= 0 && newPos.y < canvas.height / box && !snake.some(segment => segment.x === newPos.x && segment.y === newPos.y) && !obstacles.some(obstacle => obstacle.x === newPos.x && obstacle.y === newPos.y) && !visited.has(newPos.x + ',' + newPos.y)) {
+                        visited.add(newPos.x + ',' + newPos.y);
                         queue.push({pos: newPos, path: [...path, newPos]});
                     }
                 }
@@ -357,34 +369,6 @@
                 food.push(newFood);
             }
         }
-
- 
-        function bfs(start, end) {
-            const queue = [{pos: start, path: []}];
-            const visited = new Set();
-            visited.add(`${start.x},${start.y}`);
-            const directions = [
-                {dx: -1, dy: 0},
-                {dx: 1, dy: 0},
-                {dx: 0, dy: -1},
-                {dx: 0, dy: 1}
-            ];
-            while (queue.length > 0) {
-                const {pos, path} = queue.shift();
-                for (const {dx, dy} of directions) {
-                    const newPos = {x: pos.x + dx, y: pos.y + dy};
-                    if (newPos.x === end.x && newPos.y === end.y) {
-                        return [...path, newPos];
-                    }
-                    if (newPos.x >= 0 && newPos.x < canvas.width / box && newPos.y >= 0 && newPos.y < canvas.height / box && !snake.some(segment => segment.x === newPos.x && segment.y === newPos.y) && !obstacles.some(obstacle => obstacle.x === newPos.x && obstacle.y === newPos.y) && !visited.has(`${newPos.x},${newPos.y}`)) {
-                        visited.add(`${newPos.x},${newPos.y}`);
-                        queue.push({pos: newPos, path: [...path, newPos]});
-                    }
-                }
-            }
-            return null;
-        }
- 
         function moveAlongPath(path) {
             let index = 0;
             const interval = setInterval(() => {
@@ -417,7 +401,36 @@
  
         generateFood();
         gameLoop();
-        }
     </script>
+    <style>
+        footer {
+          text-align: center;
+          background-color: #888;
+          color: #fff;
+          padding: 10px;
+          position: fixed;
+          bottom: 0;
+          width: 100%;
+        }
+        a[href^="mailto:"]{
+          color: blue;
+          text-decoration: underline;
+          font-weight: bold;
+        }  
+        a[href^="mailto:"]:hover{
+          color: yellow;
+          text-decoration: underline;
+          font-weight: bold;
+        }  
+        a[href^='mailto:']:active{
+          color: red;
+          text-decoration: underline;
+          font-weight: bold;
+        }  
+        </style>
+    <footer>
+        <p><em>版权所有:</em><strong><mark>秦以宁</mark></strong><em>&copy;</em><b>2024</b></p>
+        <p><em>联系方式:</em><a href="mailto:support@infinite101.us.kg"><strong>support@infinite101.us.kg</strong></a></p>
+    </footer>
 </body>
-</html>               
+</html>  

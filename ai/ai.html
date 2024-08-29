@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ch">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI工具</title>
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/172038171?v=4" type="image/png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            width: 600px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            background: #007bff;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        progress {
+            width: 100%;
+            margin-top: 20px;
+        }
+        h4 {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI工具</h1>
+        <input type="text" id="prompts" placeholder="输入提示词">
+        <input type="text" id="questions" placeholder="输入问题">
+        <select id="models">
+            <option value="@cf/meta/llama-2-7b-chat-fp16">v1.0</option>
+            <option value="@cf/mistral/mistral-7b-instruct-v0.1">v1.1</option>
+            <option value="@cf/meta/llama-2-7b-chat-int8">v1.2</option>
+            <option value="@cf/qwen/qwen1.5-0.5b-chat">v1.3</option>
+            <option value="@cf/google/gemma-2b-it-lora">v1.4</option>
+            <option value="@cf/meta/llama-3-8b-instruct">v1.5</option>
+            <option value="@cf/mistral/mistral-7b-instruct-v0.2-lora">v1.6</option>
+            <option value="@cf/tinyllama/tinyllama-1.1b-chat-v1.0">chat-v1.0</option>
+            <option value="@cf/fblgit/una-cybertron-7b-v2-bf16">v1.7</option>
+            <option value="@cf/thebloke/discolm-german-7b-v1-awq">v2.0</option>
+            <option value="@cf/meta/llama-3.1-8b-instruct-fp8">v2.1</option>
+            <option value="@cf/qwen/qwen1.5-7b-chat-awq">chat-v1.1</option>
+            <option value="@cf/meta-llama/llama-2-7b-chat-hf-lora">v2.2</option>
+            <option value="@cf/deepseek-ai/deepseek-math-7b-instruct">math-v1.0</option>
+            <option value="@cf/tiiuae/falcon-7b-instruct">v2.4</option>
+            <option value="@cf/meta/llama-3.1-8b-instruct">v2.5</option>
+            <option value="@cf/google/gemma-7b-it-lora">v2.6</option>
+            <option value="@cf/qwen/qwen1.5-1.8b-chat">chat-1.2</option>
+            <option value="@cf/meta/llama-3-8b-instruct-awq">v2.7</option>
+            <option value="@cf/defog/sqlcoder-7b-2">v2.8</option>
+            <option value="@cf/microsoft/phi-2">v2.9</option>
+            <option value="@cf/qwen/qwen1.5-14b-chat-awq">chat-1.3</option>
+            <option value="@cf/openchat/openchat-3.5-0106">chat-1.4</option>
+        </select>
+        <button onclick="runAI()">运行</button>
+        <progress id="progress" value="0" max="100"></progress>
+        <h4 id="result"></h4>
+    </div>
+
+    <script>
+        let progressInterval;
+
+        async function runAI() {
+            const model = document.getElementById("models").value;
+            const prompts = document.getElementById("prompts").value;
+            const questions = document.getElementById("questions").value;
+
+            const input = {
+                messages: [
+                    { role: "system", content: prompts },
+                    { role: "user", content: questions }
+                ]
+            };
+
+            // 重置进度条
+            document.getElementById("progress").value = 0;
+            document.getElementById("result").innerHTML = "";
+
+            // 启动进度条更新
+            let progress = 0;
+            progressInterval = setInterval(() => {
+                progress += 1;
+                if (progress > 99) progress = 99;
+                document.getElementById("progress").value = progress;
+                document.getElementById("progress").nextSibling.textContent = `${progress}%`;
+            }, 100);
+
+            try {
+                const response = await fetch(
+                    `https://backai.qinyining.cn?model=${model}`,
+                    {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(input),
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const result = await response.json();
+                clearInterval(progressInterval);
+                document.getElementById("progress").value = 100;
+                document.getElementById("progress").nextSibling.textContent = "100%";
+                document.getElementById("result").innerHTML = result.result.response;
+            } catch (error) {
+                console.error('Error:', error);
+                clearInterval(progressInterval);
+                document.getElementById("progress").value = 0;
+                document.getElementById("progress").nextSibling.textContent = "0%";
+                document.getElementById("result").innerHTML = "请求失败，请重试。";
+            }
+        }
+    </script>
+</body>
+</html>
